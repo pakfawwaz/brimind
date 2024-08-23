@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geochemistry Sample App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        #sample-form {
+            margin-bottom: 20px;
+        }
+        #sample-list {
+            margin-bottom: 20px;
+            width: 80%;
+        }
+        #map {
+            width: 80%;
+            height: 500px;
+        }
+        .sample-item, .chemical-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .chemical-input select {
+            margin-right: 10px;
+        }
+        .remove-button {
+            margin-left: auto;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .menu-item {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #007cbf;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <h1>Geochemistry Sample App</h1>
+   
+    <div class="menu-item" onclick="window.location.href='model.html'">Upload and Train Models</div>
+
+    <div id="sample-form">
+        <form id="add-sample-form">
+            <label for="sample-type">Sample Type:</label>
+            <select id="sample-type" name="sample-type" required>
+                <option value="rocks">Rocks</option>
+                <option value="soil">Soil</option>
+                <option value="sediments">Sediments</option>
+            </select>
+            <br><br>
+
+            <label for="latitude">Latitude:</label>
+            <input type="number" step="any" id="latitude" name="latitude" required>
+            <br><br>
+
+            <label for="longitude">Longitude:</label>
+            <input type="number" step="any" id="longitude" name="longitude" required>
+            <br><br>
+
+            <!-- Chemical selection -->
+            <label for="chemical-select">Select Chemical:</label>
+            <select id="chemical-select">
+                <option value="au1">Au (Gold)</option>
+                <option value="cu">Cu (Copper)</option> 
+                <option value="pb">Pb (Lead)</option> 
+                <option value="zn">Zn (Zinc)</option> 
+                <option value="ag">Ag (Silver)</option> 
+                <option value="as">As (Arsenic)</option> 
+                <option value="bi">Bi (Bismuth)</option> 
+                <option value="mo">Mo (Molybdenum)</option> 
+                <option value="mn">Mn (Manganese)</option> 
+                <option value="fe">Fe (Iron)</option> 
+                <option value="ni">Ni (Nickel)</option>
+                <option value="co">Co (Cobalt)</option> 
+                <option value="cr">Cr (Chromium)</option> 
+                <option value="v">V (Vanadium)</option> 
+                <option value="ba">Ba (Barium)</option> 
+                <option value="cd">Cd (Cadmium)</option> 
+                <option value="sn">Sn (Tin)</option> 
+                <option value="sb">Sb (Antimony)</option> 
+                <option value="hg">Hg (Mercury)</option> 
+                <option value="te">Te (Tellurium)</option>
+                 <option value="p">P (Phosphorus)</option> 
+                 <option value="w">W (Tungsten)</option> 
+                 <option value="zr">Zr (Zirconium)</option> 
+                 <option value="ti">Ti (Titanium)</option> 
+                 <option value="mg">Mg (Magnesium)</option> 
+                 <option value="th">Th (Thorium)</option> 
+                 <option value="u">U (Uranium)</option> 
+                 <option value="pt">Pt (Platinum)</option> 
+                 <option value="pd">Pd (Palladium)</option> 
+                 <option value="s">S (Sulfur)</option> 
+                 <option value="f">F (Fluorine)</option>
+
+                <!-- Add more options here -->
+            </select>
+            <button type="button" id="add-chemical">Add Chemical</button>
+            <br><br>
+
+            <div id="chemical-inputs"></div>
+
+            <label for="model-version">Select Model Version:</label>
+            <select id="model-version">
+                <option value="v1">Model Version 1</option>
+                <option value="v2">Model Version 2</option>
+                <!-- Add more options here -->
+            </select>
+            <br><br>
+
+            <button type="button" id="add-sample">Add Sample</button>
+        </form>
+    </div>
+
+    <div id="sample-list">
+        <h2>Added Samples:</h2>
+        <div id="samples"></div>
+    </div>
+
+    <div id="map"></div>
+</div>
+
+<!-- Include Mapbox GL JS for the map -->
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+<script src="app.js"></script>
+
+</body>
+</html>

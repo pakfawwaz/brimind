@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Training</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .menu-item {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #007cbf;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #file-upload {
+            margin: 20px;
+        }
+        #model-list {
+            margin: 20px;
+            width: 80%;
+        }
+        .model-item {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <h1>Upload Data and Train Models</h1>
+
+    <div class="menu-item" onclick="window.location.href='index.html'">Go Back to Main Page</div>
+
+    <div id="file-upload">
+        <h2>Upload Excel File</h2>
+        <input type="file" id="upload-file" accept=".xlsx, .xls">
+        <br><br>
+
+        <label for="train-option">Select an Option:</label>
+        <select id="train-option">
+            <option value="recreate">Recreate Model</option>
+            <option value="fine-tune">Fine-Tune Existing Model</option>
+        </select>
+        <br><br>
+
+        <button type="button" id="upload-data">Upload and Train</button>
+    </div>
+
+    <div id="model-list">
+        <h2>Available Models</h2>
+        <div id="models">
+            <div class="model-item">
+                <strong>Model Version 1</strong><br>
+                Accuracy: 90%<br>
+                Remarks: Initial model based on original dataset.
+            </div>
+            <div class="model-item">
+                <strong>Model Version 2</strong><br>
+                Accuracy: 92%<br>
+                Remarks: Improved model with additional data.
+            </div>
+            <!-- Add more models here -->
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
