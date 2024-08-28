@@ -7,6 +7,22 @@ var map = new mapboxgl.Map({
     zoom: 12
 });
 
+//test send request
+sendRequest('http://localhost:5000/api/testing');
+
+//make request to api
+function sendRequest(url){
+    axios.get(url)
+    .then(function (response) {
+        // document.getElementById('output').innerText = response.data.message;
+        console.log(response);
+    })
+    .catch(function (error) {
+        // Handle error
+        console.error('Error fetching data:', error);
+    });
+}
+
 // Sample data handling
 let samples = [];
 let chemicals = {};

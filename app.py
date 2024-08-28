@@ -1,7 +1,14 @@
 from flask import Flask, render_template
+from flask_cors import CORS
+
 import os
 app = Flask(__name__)
+CORS(app)
 
+from routes import api_routes
+app.register_blueprint(api_routes)
+
+# web routes
 @app.route('/')
 def index():
     return render_template('index.html')
