@@ -8,7 +8,7 @@ var map = new mapboxgl.Map({
 });
 
 //test send request
-sendRequest('http://localhost:5000/api/testing');
+sendRequest('https://brimind-1e1ebaaaf3ef.herokuapp.com:5000/api/testing');
 
 //make request to api
 function sendRequest(url){
