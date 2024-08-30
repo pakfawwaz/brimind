@@ -60,7 +60,7 @@ document.getElementById('add-sample').addEventListener('click', function() {
 
 function updateSampleList() {
     const sampleListDiv = document.getElementById('samples');
-    sampleListDiv.innerHTML = '';
+    sampleListDiv.innerHTML = ''; // Clear the list
     samples.forEach((sample, index) => {
         const sampleDiv = document.createElement('div');
         sampleDiv.classList.add('sample-item');
@@ -93,6 +93,7 @@ function drawCircle(lat, lng) {
     const circleId = `circle-${circleLayers.length}`;
 
     const newCircle = {
+        id: circleId,
         lat: lat,
         lng: lng,
         radius: radiusInMeters
@@ -127,17 +128,15 @@ function drawCircle(lat, lng) {
     };
 
     map.addLayer(circleLayer);
-    circleLayers.push(newCircle); // Store the circle's lat, lng, and radius
+    circleLayers.push(newCircle); // Store the circle's data
 }
 
-// Function to calculate the midpoint between two coordinates
 function calculateMidpoint(lat1, lng1, lat2, lng2) {
     const latMid = (lat1 + lat2) / 2;
     const lngMid = (lng1 + lng2) / 2;
     return [latMid, lngMid];
 }
 
-// Function to calculate the distance between two coordinates in meters
 function getDistanceFromLatLonInMeters(lat1, lng1, lat2, lng2) {
     const R = 6371e3; // Radius of the Earth in meters
     const φ1 = lat1 * Math.PI / 180;
@@ -164,7 +163,7 @@ function removeSample(index) {
     markers.splice(index, 1);
 
     // Remove the corresponding circle from the map
-    const circleId = `circle-${index}`;
+    const circleId = circleLayers[index].id;
     map.removeLayer(circleId);
     map.removeSource(circleId);
     circleLayers.splice(index, 1);
@@ -181,19 +180,17 @@ function removeChemical(chemical) {
 // Handle circle hover effect
 map.on('mousemove', function (e) {
     const features = map.queryRenderedFeatures(e.point, {
-        layers: circleLayers.map(circle => `circle-${circle.id}`)
+        layers: circleLayers.map(circle => circle.id)
     });
 
     map.getCanvas().style.cursor = features.length ? 'pointer' : '';
 
     if (features.length) {
-        // Change overlapping parts of circles on hover
         const hoveredCircleId = features[0].layer.id;
         map.setPaintProperty(hoveredCircleId, 'fill-color', 'rgba(200, 0, 0, 0.5)');
     } else {
-        // Reset color for all circles
         circleLayers.forEach(circle => {
-            map.setPaintProperty(`circle-${circle.id}`, 'fill-color', 'rgba(0, 200, 0, 0.5)');
+            map.setPaintProperty(circle.id, 'fill-color', 'rgba(0, 200, 0, 0.5)');
         });
     }
 });
