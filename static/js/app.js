@@ -11,7 +11,7 @@ var map = new mapboxgl.Map({
 let samples = [];
 let chemicals = {};
 let markers = []; // Array to store markers
-let circleLayers = []; // Array to store circle layer IDs
+let circleLayers = []; // Array to store circle layers
 
 document.getElementById('add-chemical').addEventListener('click', function() {
     const chemicalSelect = document.getElementById('chemical-select');
@@ -50,8 +50,10 @@ document.getElementById('add-sample').addEventListener('click', function() {
     samples.push(sample);
     let marker = plotOnMap(sample);
     markers.push(marker); // Store the marker for later removal
-    drawCircle(sample.lat, sample.lng);
     updateSampleList();
+   
+    // Draw circle around the sample
+    drawCircle(sample.lat, sample.lng);
    
     // Clear chemical inputs after adding a sample
     document.getElementById('chemical-inputs').innerHTML = '';
@@ -93,7 +95,6 @@ function drawCircle(lat, lng) {
     const circleId = `circle-${circleLayers.length}`;
 
     const newCircle = {
-        id: circleId,
         lat: lat,
         lng: lng,
         radius: radiusInMeters
@@ -108,7 +109,7 @@ function drawCircle(lat, lng) {
             // Calculate midpoint and create a new marker
             const [midLat, midLng] = calculateMidpoint(existingCircle.lat, existingCircle.lng, lat, lng);
             new mapboxgl.Marker({ color: "red" }) // Different color for overlap
-                .setLngLat([midLat, midLng])
+                .setLngLat([midLng, midLat])
                 .addTo(map);
         }
     }
@@ -128,7 +129,7 @@ function drawCircle(lat, lng) {
     };
 
     map.addLayer(circleLayer);
-    circleLayers.push(newCircle); // Store the circle's data (including the ID)
+    circleLayers.push(newCircle); // Store the circle's lat, lng, and radius
 }
 
 // Function to calculate the distance between two coordinates in meters
@@ -177,20 +178,16 @@ function createGeoJSONCircle(center, radiusInMeters, points = 64) {
 }
 
 function removeSample(index) {
-    // Remove the sample from the array
     samples.splice(index, 1);
+    markers[index].remove(); // Remove the marker from the map
+    markers.splice(index, 1); // Remove the marker from the array
 
-    // Remove the corresponding marker from the map
-    markers[index].remove();
-    markers.splice(index, 1);
-
-    // Remove the corresponding circle from the map
-    const circleId = circleLayers[index].id;
+    // Remove the circle from the map
+    const circleId = circleLayers[index];
     map.removeLayer(circleId);
     map.removeSource(circleId);
     circleLayers.splice(index, 1);
 
-    // Update the sample list in the UI
     updateSampleList();
 }
 
@@ -208,7 +205,7 @@ function calculateMidpoint(lat1, long1, lat2, long2){
 // Handle circle hover effect
 map.on('mousemove', function (e) {
     const features = map.queryRenderedFeatures(e.point, {
-        layers: circleLayers.map(circle => circle.id) // Correctly reference circle IDs
+        layers: circleLayers
     });
 
     map.getCanvas().style.cursor = features.length ? 'pointer' : '';
@@ -219,8 +216,8 @@ map.on('mousemove', function (e) {
         map.setPaintProperty(hoveredCircleId, 'fill-color', 'rgba(200, 0, 0, 0.5)');
     } else {
         // Reset color for all circles
-        circleLayers.forEach(circle => {
-            map.setPaintProperty(circle.id, 'fill-color', 'rgba(0, 200, 0, 0.5)');
+        circleLayers.forEach(circleId => {
+            map.setPaintProperty(circleId, 'fill-color', 'rgba(0, 200, 0, 0.5)');
         });
     }
 });
