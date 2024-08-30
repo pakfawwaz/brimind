@@ -3,8 +3,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibWJva25lZmF3d2F6IiwiYSI6ImNsenI3NGlyMDBvaDQyb
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/satellite-v9',
-    center: [113.9213, -0.7893], // Coordinates for the center of Indonesia
-    zoom: 4 // Adjust zoom level to fit Indonesia
+    center: [113.9213, -0.7893], // Center on Indonesia
+    zoom: 4 // Adjust zoom level to show Indonesia
 });
 
 // Sample data handling
@@ -37,7 +37,8 @@ document.getElementById('add-sample').addEventListener('click', function() {
         type: document.getElementById('sample-type').value,
         lat: parseFloat(document.getElementById('latitude').value),
         lng: parseFloat(document.getElementById('longitude').value),
-        geochemistry: {}
+        geochemistry: {},
+        lithology: document.getElementById('lithology').value // Collect lithology data
     };
 
     // Collect geochemistry data
@@ -49,21 +50,13 @@ document.getElementById('add-sample').addEventListener('click', function() {
     samples.push(sample);
     let marker = plotOnMap(sample);
     markers.push(marker); // Store the marker for later removal
-    updateSampleList();
-   
-    // Draw circle around the sample
     drawCircle(sample.lat, sample.lng);
-   
+    updateSampleList();
+
     // Clear chemical inputs after adding a sample
     document.getElementById('chemical-inputs').innerHTML = '';
     chemicals = {};
 });
-
-function calculateMidpoint(lat1, lng1, lat2, lng2) {
-    const latMid = (lat1 + lat2) / 2;
-    const lngMid = (lng1 + lng2) / 2;
-    return [latMid, lngMid];
-}
 
 function updateSampleList() {
     const sampleListDiv = document.getElementById('samples');
@@ -80,6 +73,7 @@ function updateSampleList() {
             Type: ${sample.type}<br>
             Latitude: ${sample.lat}<br>
             Longitude: ${sample.lng}<br>
+            Lithology: ${sample.lithology}<br>
             Geochemistry: ${geochemistryText.slice(0, -2)}<br>
             <button type="button" class="remove-button" onclick="removeSample(${index})">Remove Sample</button>
         `;
@@ -136,6 +130,13 @@ function drawCircle(lat, lng) {
     circleLayers.push(newCircle); // Store the circle's lat, lng, and radius
 }
 
+// Function to calculate the midpoint between two coordinates
+function calculateMidpoint(lat1, lng1, lat2, lng2) {
+    const latMid = (lat1 + lat2) / 2;
+    const lngMid = (lng1 + lng2) / 2;
+    return [latMid, lngMid];
+}
+
 // Function to calculate the distance between two coordinates in meters
 function getDistanceFromLatLonInMeters(lat1, lng1, lat2, lng2) {
     const R = 6371e3; // Radius of the Earth in meters
@@ -152,46 +153,23 @@ function getDistanceFromLatLonInMeters(lat1, lng1, lat2, lng2) {
     return R * c;
 }
 
-function createGeoJSONCircle(center, radiusInMeters, points = 64) {
-    const coords = {
-        latitude: center[1],
-        longitude: center[0]
-    };
-
-    const km = radiusInMeters / 1000;
-    const ret = [];
-    const distanceX = km / (111.32 * Math.cos((coords.latitude * Math.PI) / 180));
-    const distanceY = km / 110.574;
-
-    for (let i = 0; i < points; i++) {
-        const theta = (i / points) * (2 * Math.PI);
-        const x = distanceX * Math.cos(theta);
-        const y = distanceY * Math.sin(theta);
-
-        ret.push([coords.longitude + x, coords.latitude + y]);
-    }
-    ret.push(ret[0]);
-
-    return {
-        type: 'Feature',
-        geometry: {
-            type: 'Polygon',
-            coordinates: [ret]
-        }
-    };
-}
-
 function removeSample(index) {
-    samples.splice(index, 1);
-    markers[index].remove(); // Remove the marker from the map
-    markers.splice(index, 1); // Remove the marker from the array
+    console.log("Removing sample at index:", index);
 
-    // Remove the circle from the map
-    const circleId = circleLayers[index];
+    // Remove the sample from the array
+    samples.splice(index, 1);
+
+    // Remove the corresponding marker from the map
+    markers[index].remove();
+    markers.splice(index, 1);
+
+    // Remove the corresponding circle from the map
+    const circleId = `circle-${index}`;
     map.removeLayer(circleId);
     map.removeSource(circleId);
     circleLayers.splice(index, 1);
 
+    // Update the sample list in the UI
     updateSampleList();
 }
 
@@ -203,7 +181,7 @@ function removeChemical(chemical) {
 // Handle circle hover effect
 map.on('mousemove', function (e) {
     const features = map.queryRenderedFeatures(e.point, {
-        layers: circleLayers
+        layers: circleLayers.map(circle => `circle-${circle.id}`)
     });
 
     map.getCanvas().style.cursor = features.length ? 'pointer' : '';
@@ -214,8 +192,8 @@ map.on('mousemove', function (e) {
         map.setPaintProperty(hoveredCircleId, 'fill-color', 'rgba(200, 0, 0, 0.5)');
     } else {
         // Reset color for all circles
-        circleLayers.forEach(circleId => {
-            map.setPaintProperty(circleId, 'fill-color', 'rgba(0, 200, 0, 0.5)');
+        circleLayers.forEach(circle => {
+            map.setPaintProperty(`circle-${circle.id}`, 'fill-color', 'rgba(0, 200, 0, 0.5)');
         });
     }
 });
