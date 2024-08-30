@@ -73,7 +73,7 @@ function updateSampleList() {
             Type: ${sample.type}<br>
             Latitude: ${sample.lat}<br>
             Longitude: ${sample.lng}<br>
-            Lithology: ${sample.lithology}<br>
+            
             Geochemistry: ${geochemistryText.slice(0, -2)}<br>
             <button type="button" class="remove-button" onclick="removeSample(${index})">Remove Sample</button>
         `;
