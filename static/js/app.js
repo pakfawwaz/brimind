@@ -3,8 +3,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibWJva25lZmF3d2F6IiwiYSI6ImNsenI3NGlyMDBvaDQyb
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/satellite-v9',
-    center: [0, 0],
-    zoom: 12
+    center: [113.9213, -0.7893],
+    zoom: 4
 });
 
 // Sample data handling
@@ -37,6 +37,7 @@ document.getElementById('add-sample').addEventListener('click', function() {
         type: document.getElementById('sample-type').value,
         lat: parseFloat(document.getElementById('latitude').value),
         lng: parseFloat(document.getElementById('longitude').value),
+        lith: document.getElementById('lithology').value,
         geochemistry: {}
     };
 
@@ -74,6 +75,7 @@ function updateSampleList() {
             Type: ${sample.type}<br>
             Latitude: ${sample.lat}<br>
             Longitude: ${sample.lng}<br>
+            Lithology: ${sample.lith}<br>
             Geochemistry: ${geochemistryText.slice(0, -2)}<br>
             <button type="button" class="remove-button" onclick="removeSample(${index})">Remove Sample</button>
         `;
