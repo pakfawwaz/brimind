@@ -60,7 +60,7 @@
 <div id="container">
     <h1>Geochemistry Sample App</h1>
    
-    <div class="menu-item" href="model.html">Upload and Train Models</div>
+    <div class="menu-item" onclick="window.location.href='model.html'">Upload and Train Models</div>
 
     <div id="sample-form">
         <form id="add-sample-form">
@@ -78,6 +78,17 @@
 
             <label for="longitude">Longitude:</label>
             <input type="number" step="any" id="longitude" name="longitude" required>
+            <br><br>
+
+            <label for="lithology">Select Lithology:</label>
+            <select id="lithology" name="lithology" required>
+                <option value="granite">Granite</option>
+                <option value="basalt">Basalt</option>
+                <option value="sandstone">Sandstone</option>
+                <option value="limestone">Limestone</option>
+                <option value="shale">Shale</option>
+                <!-- Add more lithology options as needed -->
+            </select>
             <br><br>
 
             <!-- Chemical selection -->

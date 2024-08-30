@@ -3,8 +3,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibWJva25lZmF3d2F6IiwiYSI6ImNsenI3NGlyMDBvaDQyb
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/satellite-v9',
-    center: [0, 0],
-    zoom: 12
+    center: [113.9213, -0.7893], // Coordinates for the center of Indonesia
+    zoom: 4 // Adjust zoom level to fit Indonesia
 });
 
 // Sample data handling
@@ -59,6 +59,12 @@ document.getElementById('add-sample').addEventListener('click', function() {
     chemicals = {};
 });
 
+function calculateMidpoint(lat1, lng1, lat2, lng2) {
+    const latMid = (lat1 + lat2) / 2;
+    const lngMid = (lng1 + lng2) / 2;
+    return [latMid, lngMid];
+}
+
 function updateSampleList() {
     const sampleListDiv = document.getElementById('samples');
     sampleListDiv.innerHTML = '';
@@ -92,6 +98,26 @@ function drawCircle(lat, lng) {
     const radiusInMeters = 30; // 30 meters
     const circleId = `circle-${circleLayers.length}`;
 
+    const newCircle = {
+        lat: lat,
+        lng: lng,
+        radius: radiusInMeters
+    };
+
+    // Check for overlaps
+    for (let i = 0; i < circleLayers.length; i++) {
+        const existingCircle = circleLayers[i];
+        const distance = getDistanceFromLatLonInMeters(existingCircle.lat, existingCircle.lng, lat, lng);
+
+        if (distance < radiusInMeters * 2) {
+            // Calculate midpoint and create a new marker
+            const [midLat, midLng] = calculateMidpoint(existingCircle.lat, existingCircle.lng, lat, lng);
+            new mapboxgl.Marker({ color: "red" }) // Different color for overlap
+                .setLngLat([midLng, midLat])
+                .addTo(map);
+        }
+    }
+
     const circleLayer = {
         id: circleId,
         type: 'fill',
@@ -107,7 +133,23 @@ function drawCircle(lat, lng) {
     };
 
     map.addLayer(circleLayer);
-    circleLayers.push(circleId); // Store the circle layer for later reference
+    circleLayers.push(newCircle); // Store the circle's lat, lng, and radius
+}
+
+// Function to calculate the distance between two coordinates in meters
+function getDistanceFromLatLonInMeters(lat1, lng1, lat2, lng2) {
+    const R = 6371e3; // Radius of the Earth in meters
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lng2 - lng1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
 }
 
 function createGeoJSONCircle(center, radiusInMeters, points = 64) {
