@@ -108,7 +108,7 @@ function drawCircle(lat, lng) {
             // Calculate midpoint and create a new marker
             const [midLat, midLng] = calculateMidpoint(existingCircle.lat, existingCircle.lng, lat, lng);
             new mapboxgl.Marker({ color: "red" }) // Different color for overlap
-                .setLngLat([midLng, midLng])
+                .setLngLat([midLat, midLng])
                 .addTo(map);
         }
     }
