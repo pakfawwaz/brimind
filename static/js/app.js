@@ -37,8 +37,7 @@ document.getElementById('add-sample').addEventListener('click', function() {
         type: document.getElementById('sample-type').value,
         lat: parseFloat(document.getElementById('latitude').value),
         lng: parseFloat(document.getElementById('longitude').value),
-        geochemistry: {},
-        lithology: document.getElementById('lithology').value // Collect lithology data
+        geochemistry: {}
     };
 
     // Collect geochemistry data
