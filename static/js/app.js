@@ -160,6 +160,12 @@ function removeChemical(chemical) {
     document.getElementById(`chemical-${chemical}`).parentElement.remove();
 }
 
+function calculateMidpoint(lat1, long1, lat2, long2){
+    const latMid = (lat1 + lat2)/2;
+    const longMid = (long1 + long2)/2;
+    return [latMid, longMid];
+}
+
 // Handle circle hover effect
 map.on('mousemove', function (e) {
     const features = map.queryRenderedFeatures(e.point, {
