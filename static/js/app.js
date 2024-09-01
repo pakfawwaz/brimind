@@ -108,8 +108,12 @@ function drawCircle(lat, lng) {
         if (distance < radiusInMeters * 2) {
             // Calculate midpoint and create a new marker
             const [midLat, midLng] = calculateMidpoint(existingCircle.lat, existingCircle.lng, lat, lng);
+            const popup =new mapboxgl.Popup({offset:25}).setText(
+                'Wleowleo'
+            )
             new mapboxgl.Marker({ color: "red" }) // Different color for overlap
                 .setLngLat([midLng, midLat])
+                .setPopup(popup)
                 .addTo(map);
         }
     }
